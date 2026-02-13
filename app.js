@@ -6,7 +6,7 @@ const cors = require('cors');
 const indexRouter = require('./routes/index');
 const app = express();
 
-app.use(cors());
+app.use(cors({origin: '*'}));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json()); //req.body가 객체로 인식이 됩니다
 
