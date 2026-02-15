@@ -20,5 +20,5 @@ productSchema.methods.toJSON = function () {
   return obj
 }
 
-const Product = mongoose.model('Product', userSchema);
+const Product = mongoose.model('Product', productSchema);
 module.exports = Product;
