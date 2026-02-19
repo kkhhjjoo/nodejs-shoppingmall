@@ -25,11 +25,11 @@ userController.getUser = async (req, res) => {
     const { userId } = req;
     const user = await User.findById(userId);
     if (user) { 
-      res.status(200).json({ status: 'success', user: user });
+      return res.status(200).json({ status: 'success', user: user });
     }
     throw new Error('유효하지 않은 토큰입니다');
   } catch (error) { 
-    res.status(400).json({ status: 'error', error: error.message });
+    return res.status(400).json({ status: 'error', error: error.message });
   }
 }
 
