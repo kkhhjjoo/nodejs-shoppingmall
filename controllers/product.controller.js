@@ -4,7 +4,8 @@ const PAGE_SIZE = 5;
 const productController = {}
 productController.createProduct = async (req, res) => { 
   try {
-    const { sku, name, size, image, category, description, price, stock, status } = req.body;
+    const { sku, name, size, category, description, price, stock, status } = req.body;
+    const image = req.file ? req.file.path : req.body.image;
     const product = new Product({ sku, name, size, image, category, description, price, stock, status });
     await product.save();
     res.status(200).json({status: 'success', product})
