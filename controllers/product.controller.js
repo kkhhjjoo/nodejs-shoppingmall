@@ -22,7 +22,7 @@ productController.getProducts = async (req, res) => {
     // } else { 
     //   const products = await Product.find({});
     // }
-    const cond = name ? { name: { $regex: name, $options: 'i' } } : {};
+    const cond = name ? { name: { $regex: name, $options: 'i' }, isDeleted: false } : {isDeleted: false};
     let query = Product.find(cond);
     let response = { status: 'success' };
     if (page) { 
@@ -53,5 +53,20 @@ productController.updateProduct = async (req, res) => {
     res.status(400).json({ status: 'fail', error: error.message });
   }
 }
+//삭제 로직
+productController.deleteProduct = async (req, res) => { 
+  try {
+    const productId = req.params.id;
+    const product = await Product.findByIdAndUpdate(
+      { _id: productId },
+      { isDeleted: true }
+    );
+    if (!product) throw new Error('상품을 찾을 수 없습니다');
+    res.status(200).json({ status: 'success' });
+  } catch (error) { 
+    return res.status(400).json({ status: 'fail', error: error.message });
+  }
+}
+
 
 module.exports = productController;
