@@ -3,10 +3,10 @@ const User = require('./User');
 const Product = require('./Product');
 const Schema = mongoose.Schema;
 const cartSchema = Schema({
-  userId: { type: mongoose.ObjectId, ref: User },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: User },
   items: [{
     productId: {
-      type: mongoose.Object, ref: Product
+      type: mongoose.Schema.Types.ObjectId, ref: Product
     },
     size: { type: String, required: true },
     qty: {type: Number, default: 1, required: true}
@@ -21,5 +21,5 @@ cartSchema.methods.toJSON = function () {
   return obj
 }
 
-const Cart = mongoose.model('Cart', userSchema);
+const Cart = mongoose.model('Cart', cartSchema);
 module.exports = Cart;
