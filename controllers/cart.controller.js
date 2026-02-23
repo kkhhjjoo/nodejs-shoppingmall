@@ -28,4 +28,49 @@ cartController.addItemToCart = async (req, res) => {
   }
 }
 
+cartController.updateCartQty = async (req, res) => {
+  try {
+    const { userId } = req;
+    const { id, qty } = req.body;
+    const cart = await Cart.findOneAndUpdate(
+      { userId, 'items._id': id },
+      { $set: { 'items.$.qty': qty } },
+      { new: true }
+    ).populate('items.productId');
+    if (!cart) throw new Error('카트를 찾을 수 없습니다');
+    res.status(200).json({ status: 'success', data: cart.items });
+  } catch (error) {
+    return res.status(400).json({ status: 'fail', message: error.message });
+  }
+};
+
+cartController.getCartList = async (req, res) => {
+  try {
+    const { userId } = req;
+    const cart = await Cart.findOne({ userId }).populate('items.productId');
+    if (!cart) {
+      return res.status(200).json({ status: 'success', data: [] });
+    }
+    res.status(200).json({ status: 'success', data: cart.items });
+  } catch (error) {
+    return res.status(400).json({ status: 'fail', message: error.message });
+  }
+};
+
+cartController.deleteCartItem = async (req, res) => {
+  try {
+    const { userId } = req;
+    const { id } = req.params;
+    const cart = await Cart.findOneAndUpdate(
+      { userId },
+      { $pull: { items: { _id: id } } },
+      { new: true }
+    ).populate('items.productId');
+    if (!cart) throw new Error('카트를 찾을 수 없습니다');
+    res.status(200).json({ status: 'success', data: cart.items });
+  } catch (error) {
+    return res.status(400).json({ status: 'fail', message: error.message });
+  }
+};
+
 module.exports = cartController;
