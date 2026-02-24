@@ -47,7 +47,13 @@ cartController.updateCartQty = async (req, res) => {
 cartController.getCartList = async (req, res) => {
   try {
     const { userId } = req;
-    const cart = await Cart.findOne({ userId }).populate('items.productId');
+    const cart = await Cart.findOne({ userId }).populate({
+      path: 'items',
+      populate: {
+        path: 'productId',
+        model: 'Product'
+      }
+    });
     if (!cart) {
       return res.status(200).json({ status: 'success', data: [] });
     }
