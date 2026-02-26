@@ -30,10 +30,8 @@ authController.authenticate = async (req, res, next) => {
     const tokenString = req.headers.authorization
     if (!tokenString) throw new Error('토큰이 존재하지 않습니다');
     const token = tokenString.replace('Bearer ', '');
-    jwt.verify(token, JWT_SECRET_KEY, (error, payload) => {
-      if (error) throw new Error('유효하지 않은 토큰입니다');
-      req.userId = payload._id
-    });
+    const payload = jwt.verify(token, JWT_SECRET_KEY);
+    req.userId = payload._id;
     next();
   } catch (error) { 
     res.status(400).json({ status: 'fail', error: error.message });
