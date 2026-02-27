@@ -38,4 +38,50 @@ orderController.createOrder = async (req, res) => {
   }
 };
 
+orderController.getOrder = async (req, res) => {
+  try {
+    const { userId } = req;
+    const PAGE_SIZE = 3;
+    const page = parseInt(req.query.page) || 1;
+
+    const totalOrders = await Order.countDocuments({ userId });
+    const totalPageNum = Math.ceil(totalOrders / PAGE_SIZE);
+
+    const orderList = await Order.find({ userId })
+      .populate('items.productId')
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * PAGE_SIZE)
+      .limit(PAGE_SIZE);
+
+    res.status(200).json({ status: 'success', data: orderList, totalPageNum });
+  } catch (error) {
+    return res.status(400).json({ status: 'fail', error: error.message });
+  }
+};
+
+orderController.getOrderList = async (req, res) => {
+  try {
+    const PAGE_SIZE = 3;
+    const page = parseInt(req.query.page) || 1;
+    const { ordernum } = req.query;
+
+    const query = {};
+    if (ordernum) query.orderNum = { $regex: ordernum, $options: 'i' };
+
+    const totalOrders = await Order.countDocuments(query);
+    const totalPageNum = Math.ceil(totalOrders / PAGE_SIZE);
+
+    const orderList = await Order.find(query)
+      .populate('userId')
+      .populate('items.productId')
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * PAGE_SIZE)
+      .limit(PAGE_SIZE);
+
+    res.status(200).json({ status: 'success', data: orderList, totalPageNum });
+  } catch (error) {
+    return res.status(400).json({ status: 'fail', error: error.message });
+  }
+};
+
 module.exports = orderController;
